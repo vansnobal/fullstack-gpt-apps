@@ -8,6 +8,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
 from langchain.prompts import ChatPromptTemplate
 import streamlit as st
+import os
 
 st.set_page_config(page_title="Assignment 15", page_icon="📃")
 
@@ -30,9 +31,17 @@ if openai_api_key != "":
 def embed_file(file):
     file_content = file.read()
     file_path = f"./.cache/files/{file.name}"
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     with open(file_path, "wb") as f:
         f.write(file_content)
-    cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
+
+    embedding_path = f"./.cache/embeddings/{file.name}"
+    directory = os.path.dirname(embedding_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    cache_dir = LocalFileStore(embedding_path)
     splitter = CharacterTextSplitter.from_tiktoken_encoder(
         separator="\n",
         chunk_size=600,
